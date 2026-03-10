@@ -1,0 +1,111 @@
+import { useContext, type FormEvent } from "react";
+import { UserContext } from "../../ContextStore/UserContext.tsx";
+import type { FormData } from "../../types/User";
+import UserForm from "../../components/UserForm";
+import FilterPanel from "../../components/FilterPanel";
+import UserSelectId from "../../components/UserSelectId";
+import UserTable from "../../components/UserTable";
+import { userColumns } from "../../constants/userColumns";
+import {
+  getFilteredUsers,
+  getFieldOptions,
+  getValueOptions,
+  parseFilterValue,
+} from "../../utils/userFormHandlers.tsx";
+
+const ContextPageContent = () => {
+  const context = useContext(UserContext);
+  if (!context) return null;
+  const { state, dispatch } = context;
+  const { users, formValue, mode, selectedId, appliedFilter, selectField, selectValue } = state;
+
+  const filteredUsers = getFilteredUsers(users, appliedFilter);
+  const fieldOptions = getFieldOptions();
+  const valueOptions = getValueOptions(users, selectField);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!formValue.userName || !formValue.city || formValue.age <= 0) {
+      alert("Fill Every Field");
+      return;
+    }
+    if (mode === "save") {
+      dispatch({ type: "ADD_USER", payload: { id: Date.now(), ...formValue } });
+    }
+    if (mode === "update" && selectedId !== null) {
+      dispatch({ type: "UPDATE_USER", id: selectedId, payload: formValue });
+      dispatch({ type: "SELECT_ID_NULL" });
+    }
+    dispatch({ type: "CLEAR_INPUT_DATA" });
+  };
+
+  const handleDelete = (id: number) => {
+    dispatch({ type: "DELETE_USER", payload: id });
+  };
+
+  const handleChangeSelectedId = (id: number | null) => {
+    if (id === null) {
+      dispatch({ type: "SELECT_ID_NULL" });
+      dispatch({ type: "CLEAR_INPUT_DATA" });
+      return;
+    }
+    dispatch({ type: "SELECT_ID", payload: id });
+  };
+
+  const handleChangeFilterField = (field: string | null) => {
+    dispatch({ type: "CHANGE_FIELD", payload: field as keyof FormData | null });
+  };
+
+  const handleChangeFilterValue = (value: string | number | null) => {
+    if (value === null) {
+      dispatch({ type: "CHANGE_VALUE", payload: null });
+      return;
+    }
+    const parsed = parseFilterValue(String(value), selectField);
+    dispatch({ type: "CHANGE_VALUE", payload: parsed });
+  };
+
+  const handleFilter = () => {
+    if (selectField && selectValue != null) {
+      dispatch({ type: "HANDLE_FILTER_BUTTON" });
+    }
+  };
+
+  const handleAll = () => {
+    dispatch({ type: "HANDLE_ALL_BUTTON" });
+  };
+
+  return (
+    <div>
+      <UserForm
+        title="Context Route"
+        formValue={formValue}
+        mode={mode}
+        selectedId={selectedId}
+        onChangeField={(field, value) =>
+          dispatch({ type: "CHANGE_FORM_VALUE", field, value })
+        }
+        onSubmit={handleSubmit}
+        onDelete={handleDelete}
+      />
+      <UserSelectId
+        users={users}
+        selectedId={selectedId}
+        onChangeId={handleChangeSelectedId}
+      />
+      <FilterPanel
+        fieldOptions={fieldOptions}
+        valueOptions={valueOptions}
+        selectField={selectField}
+        selectValue={selectValue}
+        onChangeField={handleChangeFilterField}
+        onChangeValue={handleChangeFilterValue}
+        onFilter={handleFilter}
+        onAll={handleAll}
+      />
+      <UserTable users={filteredUsers} columns={userColumns} />
+    </div>
+  );
+};
+
+export default ContextPageContent;
