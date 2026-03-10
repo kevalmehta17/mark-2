@@ -1,39 +1,55 @@
-import type { ChangeEvent } from "react";
-import type { FormData, SubmitParams, DeleteParams } from "../types/User";
-import type { User } from "../types/User";
+import type { ChangeEvent,  } from "react";
+import type { User, FormData } from "../types/User";
 
-export const handleFormSubmit = ({
-  e,
-  mode,
-  selectedId,
-  onAdd,
-  onUpdate,
-  onClear,
-  onDeselectId,
-}: SubmitParams): void => {
-  e.preventDefault();
-  const data = new FormData(e.currentTarget);
+// interface SubmitParams {
+//   e: FormEvent<HTMLFormElement>;
+//   mode: "save" | "update";
+//   selectedId: number | null;
+//   onAdd: (user: User) => void;
+//   onUpdate: (id: number, formData: FormData) => void;
+//   onClear: () => void;
+//   onDeselectId: () => void;
+// }
 
-  const userName = (data.get("userName") as string).trim();
-  const city = (data.get("city") as string).trim();
-  const age = Number(data.get("age"));
+// interface DeleteParams {
+//   selectedId: number | null;
+//   onDelete: (id: number) => void;
+//   onClear: () => void;
+//   onDeselectId: () => void;
+// }
 
-  if (!userName || !city || age <= 0) {
-    alert("Fill Every Field");
-    return;
-  }
+// export const handleFormSubmit = ({
+//   e,
+//   mode,
+//   selectedId,
+//   onAdd,
+//   onUpdate,
+//   onClear,
+//   onDeselectId,
+// }: SubmitParams): void => {
+//   e.preventDefault();
+//   const data = new FormData(e.currentTarget);
 
-  if (mode === "save") {
-    onAdd({ id: +new Date(), userName, city, age });
-  }
+//   const userName = (data.get("userName") as string).trim();
+//   const city = (data.get("city") as string).trim();
+//   const age = Number(data.get("age"));
 
-  if (mode === "update") {
-    if (selectedId == null) return;
-    onUpdate(selectedId, { userName, city, age });
-    onDeselectId();
-  }
-  onClear();
-};
+//   if (!userName || !city || age <= 0) {
+//     alert("Fill Every Field");
+//     return;
+//   }
+
+//   if (mode === "save") {
+//     onAdd({ id: +new Date(), userName, city, age });
+//   }
+
+//   if (mode === "update") {
+//     if (selectedId == null) return;
+//     onUpdate(selectedId, { userName, city, age });
+//     onDeselectId();
+//   }
+//   onClear();
+// };
 
 export const handleFormChange = (
   e: ChangeEvent<HTMLInputElement>,
@@ -46,17 +62,17 @@ export const handleFormChange = (
 };
 
 
-export const handleFormDelete = ({
-  selectedId,
-  onDelete,
-  onClear,
-  onDeselectId,
-}: DeleteParams): void => {
-  if (selectedId == null) return;
-  onDelete(selectedId);
-  onDeselectId();
-  onClear();
-};
+// export const handleFormDelete = ({
+//   selectedId,
+//   onDelete,
+//   onClear,
+//   onDeselectId,
+// }: DeleteParams): void => {
+//   if (selectedId == null) return;
+//   onDelete(selectedId);
+//   onDeselectId();
+//   onClear();
+// };
 
 
 // FOR THE UNIQUE

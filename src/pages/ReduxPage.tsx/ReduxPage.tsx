@@ -1,5 +1,5 @@
 import { Provider } from "react-redux";
-import { store } from "./store/UserStore";
+import { store } from "../../Reduxstore/UserStore.tsx";
 import ReduxPageContent from "./ReduxPageContent.tsx";
 
 const ReduxPage = () => {
